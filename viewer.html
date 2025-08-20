@@ -113,7 +113,7 @@
         }
         .collage-item {
             background: white; padding: 10px; box-shadow: 3px 3px 12px var(--shadow-color);
-            transform: rotate(var(--r, 0deg)); transition: transform 0.3s, z-index 0.3s;
+            transform: rotate(var(--r, 0deg)); transition: transform 0.3s, z-index: 0.3s;
             position: relative; border-radius: 4px;
         }
         .collage-item:hover { transform: rotate(0deg) scale(1.15); z-index: 10; }
@@ -172,19 +172,19 @@
         }
 
         /* ------------------- */
-        /* --- PLACES (MAP) PAGE --- */
+        /* --- MAP IMAGE ON PLACES PAGE --- */
         /* ------------------- */
         .map-container {
             width: 100%;
-            height: 500px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            overflow: hidden; /* Ensures the iframe corners are rounded */
+            overflow: hidden; /* Ensures the image corners are rounded */
+            margin-top: 30px;
         }
-        .map-container iframe {
+        .map-container img {
             width: 100%;
-            height: 100%;
-            border: 0;
+            height: auto;
+            display: block;
         }
 
         /* Letter Modal */
@@ -194,10 +194,18 @@
             justify-content: center; align-items: center; animation: fadeIn 0.3s;
         }
         .modal-content {
-            background-color: var(--notebook-bg); padding: 40px; border-radius: 12px;
-            width: 90%; max-width: 500px; box-shadow: 0 5px 25px rgba(0,0,0,0.3);
-            position: relative; line-height: 1.8; font-size: 1.4rem; font-family: var(--font-handwriting);
+            background-color: var(--notebook-bg); padding: 20px; border-radius: 12px;
+            width: 90%; max-width: 600px; box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+            position: relative; 
             max-height: 80vh; overflow-y: auto;
+        }
+        .modal-content #letter-content {
+            font-family: var(--font-handwriting);
+            line-height: 1.8; font-size: 1.4rem;
+        }
+        .modal-content #letter-content img {
+            max-width: 100%;
+            border-radius: 8px;
         }
         .close-button {
             color: #aaa; position: absolute; top: 10px; right: 20px;
@@ -217,7 +225,7 @@
             background: none; border: none; color: var(--primary-color); font-size: 0.7rem;
             display: flex; flex-direction: column; align-items: center; cursor: pointer;
             transition: color 0.3s, transform 0.3s; text-decoration: none;
-            font-family: var(--font-main); width: 20%; text-align: center;
+            font-family: var(--font-main); flex-grow: 1; text-align: center;
         }
         .nav-button i { font-size: 1.4rem; margin-bottom: 5px; }
         .nav-button:hover { transform: translateY(-5px); }
@@ -249,9 +257,8 @@
                 <div class="notebook">
                     <div class="notebook-left">
                         <div class="polaroid">
-                            <!-- File Structure: Place your main photo in an 'images' folder -->
-                            <img src="images/pic1.jpg" alt="A special picture" onerror="this.src='https://placehold.co/400x400/ffb6c1/ffffff?text=images/pic1.jpg';">
-                            <p>Our Favorite Moment</p>
+                            <!-- IMAGE FIX: Now checks for .jpg and then .jpeg -->
+                            <img src="images/pic1.jpg" onerror="this.onerror=null; this.src='images/pic1.jpeg';" alt="A special picture">
                         </div>
                     </div>
                     <div class="notebook-right">
@@ -295,12 +302,12 @@
                     <!-- Envelopes will be added here by JavaScript -->
                  </div>
             </section>
-            
-            <!-- ======================= PLACES PAGE ======================= -->
+
+            <!-- ======================= PLACES PAGE (RE-ADDED) ======================= -->
             <section id="places" class="page-content">
-                <h2>Places We've Been</h2>
-                <div class="map-container" id="map-container">
-                    <!-- Map will be added here by JavaScript -->
+                <h2>Our Special Places</h2>
+                <div class="map-container">
+                    <img src="map.jpeg" alt="A map of special places" onerror="this.style.display='none'">
                 </div>
             </section>
         </main>
@@ -320,7 +327,7 @@
     <div id="letterModal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
-            <p id="letterText"></p>
+            <div id="letter-content"></div>
         </div>
     </div>
 
@@ -342,7 +349,6 @@
                 return {
                     photos: 12, sketches: 15, letters: 10,
                     drive: "https://drive.google.com/drive/folders/13A7yHNq3G_0-2jUtDl91OqWt3I8GZM8p?usp=sharing",
-                    map: `<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.536933552636!2d77.1805943150821!3d28.5977156824249!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d1d9a65f76b05%3A0x150784942e316d6!2sNational%20Rail%20Museum!5e0!3m2!1sen!2sin!4v1663333333333!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`
                 };
             }
 
@@ -353,7 +359,6 @@
             const sketchesCanvas = document.getElementById('sketches-canvas');
             const lettersCanvas = document.getElementById('letters-canvas');
             const driveLinkNav = document.getElementById('drive-link-nav');
-            const mapContainer = document.getElementById('map-container');
             const spotifyPlayer = document.getElementById('spotify-player');
 
             // 1. Generate Collage Photos
@@ -362,8 +367,7 @@
                 const item = document.createElement('div');
                 item.className = 'collage-item';
                 item.style.setProperty('--r', `${randomRotate}deg`);
-                // Start from pic2.jpg for collage, as pic1.jpg is on the homepage
-                item.innerHTML = `<img src="images/pic${i + 1}.jpg" alt="Collage image ${i + 1}" onerror="this.src='https://placehold.co/300x400/ffb6c1/ffffff?text=images/pic${i+1}.jpg'">`;
+                item.innerHTML = `<img src="images/pic${i + 1}.jpg" onerror="this.onerror=null; this.src='images/pic${i + 1}.jpeg';" alt="Collage image ${i + 1}">`;
                 collageGrid.appendChild(item);
             }
 
@@ -371,7 +375,7 @@
             for (let i = 1; i <= pageData.sketches; i++) {
                 const sketchItem = document.createElement('div');
                 sketchItem.className = 'sketch-item';
-                sketchItem.innerHTML = `<img src="sketches/sketch${i}.png" alt="Sketch ${i}" onerror="this.src='https://placehold.co/200x200/ffffff/5b454a?text=sketches/sketch${i}.png'">`;
+                sketchItem.innerHTML = `<img src="sketches/sketch${i}.png" onerror="this.onerror=null; this.src='sketches/sketch${i}.jpg'; this.onerror=null; this.src='sketches/sketch${i}.jpeg';" alt="Sketch ${i}">`;
                 sketchesCanvas.appendChild(sketchItem);
             }
 
@@ -389,12 +393,6 @@
             
             // 5. Update Spotify Player
             spotifyPlayer.src = "https://open.spotify.com/embed/playlist/0Sz6lme8O5PAG1mIrnPWmo";
-
-            // 6. Generate Google Map
-            if (pageData.map && pageData.map.trim().startsWith('<iframe')) {
-                mapContainer.innerHTML = pageData.map;
-            }
-
 
             // --- NON-OVERLAPPING RANDOM PLACEMENT LOGIC ---
             function randomizePlacement(canvasId, itemSelector) {
@@ -479,26 +477,34 @@
                 });
             });
 
-            // --- LETTER MODAL LOGIC (FETCH FROM FILE) ---
+            // --- LETTER MODAL LOGIC (IMAGES) ---
             const modal = document.getElementById('letterModal');
             const closeButton = document.querySelector('.close-button');
-            const letterText = document.getElementById('letterText');
+            const letterContent = document.getElementById('letter-content');
 
             document.querySelectorAll('.envelope').forEach(envelope => {
-                envelope.addEventListener('click', async () => {
+                envelope.addEventListener('click', () => {
                     const letterId = envelope.getAttribute('data-letter');
-                    const filePath = `letters/letter${letterId}.txt`;
                     
-                    try {
-                        const response = await fetch(filePath);
-                        if (!response.ok) throw new Error('Letter not found.');
-                        const text = await response.text();
-                        letterText.innerText = text;
-                    } catch (error) {
-                        console.error('Error fetching letter:', error);
-                        letterText.innerText = "Couldn't find this letter. Make sure the file exists at: " + filePath;
-                    }
+                    // Clear previous content
+                    letterContent.innerHTML = '';
+
+                    // Create and append the image
+                    const img = document.createElement('img');
+                    img.src = `letters/letter${letterId}.jpg`;
+                    img.onerror = function() {
+                        this.onerror = null;
+                        this.src = `letters/letter${letterId}.jpeg`;
+                        this.onerror = function() {
+                            this.onerror = null;
+                            this.src = `letters/letter${letterId}.png`;
+                            this.onerror = function() {
+                                letterContent.innerHTML = `<p>Couldn't find letter ${letterId}. Make sure it's named letter${letterId}.jpg, .jpeg, or .png</p>`;
+                            }
+                        }
+                    };
                     
+                    letterContent.appendChild(img);
                     modal.style.display = 'flex';
                 });
             });
