@@ -47,7 +47,7 @@
                         <input type="number" id="letter-count" value="10" min="1" class="w-full p-2 border rounded-lg focus:ring-pink-400 focus:border-pink-400">
                     </div>
                 </div>
-                <p class="text-xs text-gray-400 mt-2">Remember to name your files like `pic1.jpg`, `sketch1.png`, `letter1.txt` etc., in their respective folders.</p>
+                <p class="text-xs text-gray-400 mt-2">Remember to name your files like `pic1.jpg`, `sketch1.png`, `letter1.jpg` etc., in their respective folders.</p>
             </div>
 
             <!-- Section for Links -->
@@ -56,11 +56,6 @@
                 <div>
                     <label for="drive-link" class="input-label block mb-1">Google Drive Link</label>
                     <input type="url" id="drive-link" value="https://drive.google.com/drive/folders/13A7yHNq3G_0-2jUtDl91OqWt3I8GZM8p?usp=sharing" class="w-full p-2 border rounded-lg focus:ring-pink-400 focus:border-pink-400">
-                </div>
-                <div class="mt-4">
-                    <label for="map-link" class="input-label block mb-1">Google Maps Embed HTML</label>
-                    <textarea id="map-link" rows="4" class="w-full p-2 border rounded-lg focus:ring-pink-400 focus:border-pink-400" placeholder="Go to Google Maps, find a place, click Share -> Embed a map, and paste the HTML code here."></textarea>
-                    <p class="text-xs text-gray-400 mt-1">Example: &lt;iframe src="..."&gt;&lt;/iframe&gt;</p>
                 </div>
             </div>
 
@@ -82,7 +77,6 @@
                 sketches: document.getElementById('sketch-count').value,
                 letters: document.getElementById('letter-count').value,
                 drive: document.getElementById('drive-link').value,
-                map: document.getElementById('map-link').value
             };
 
             // Encode the data to be URL-safe
