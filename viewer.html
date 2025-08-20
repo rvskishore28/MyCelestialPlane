@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Place for You</title>
+    
+    <!-- Google Fonts for a handwritten feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <style>
+        /* ------------------- */
+        /* --- GLOBAL STYLES & THEME --- */
+        /* ------------------- */
+        :root {
+            --bg-color: #fff0f5; /* Lavender Blush */
+            --primary-color: #ffb6c1; /* Light Pink */
+            --accent-color: #ff69b4; /* Hot Pink */
+            --text-color: #5b454a;
+            --notebook-bg: #fdfdf7;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --font-handwriting: 'Kalam', cursive;
+            --font-main: 'Inter', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        /* Animated Hearts Background */
+        .background-hearts {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; z-index: -1;
+        }
+        .heart {
+            position: absolute; list-style: none; font-size: 2rem;
+            color: var(--primary-color); opacity: 0; animation: floatUp 10s infinite linear;
+        }
+        .heart:nth-child(1) { left: 10%; animation-duration: 13s; animation-delay: 0s; }
+        .heart:nth-child(2) { left: 20%; animation-duration: 15s; animation-delay: 2s; }
+        .heart:nth-child(3) { left: 35%; animation-duration: 18s; animation-delay: 4s; }
+        .heart:nth-child(4) { left: 50%; animation-duration: 12s; animation-delay: 0s; }
+        .heart:nth-child(5) { left: 65%; animation-duration: 16s; animation-delay: 1s; }
+        .heart:nth-child(6) { left: 80%; animation-duration: 14s; animation-delay: 3s; }
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0.5; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        #app-container {
+            max-width: 900px; margin: 0 auto; padding: 20px; padding-bottom: 100px;
+        }
+
+        h2, h3 {
+            text-align: center; color: var(--accent-color); font-family: var(--font-handwriting);
+            font-size: 2.5rem;
+        }
+
+        /* Page Content Management */
+        .page-content { display: none; animation: fadeIn 0.6s ease-in-out; }
+        .page-content.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ------------------- */
+        /* --- HOMEPAGE: NOTEBOOK --- */
+        /* ------------------- */
+        .notebook {
+            display: flex; flex-direction: column; width: 100%; min-height: 500px;
+            background: var(--notebook-bg); box-shadow: 5px 5px 20px var(--shadow-color);
+            border: 1px solid #eee; position: relative; padding-left: 30px; border-radius: 8px;
+        }
+        .notebook::before {
+            content: ''; position: absolute; left: 15px; top: 20px; bottom: 20px; width: 5px;
+            background: radial-gradient(circle at center, #ccc 2px, transparent 3px), repeating-linear-gradient(#fff, #fff 15px, transparent 15px, transparent 30px);
+            background-size: 5px 30px;
+        }
+        .notebook-left, .notebook-right { flex: 1; padding: 25px; }
+        .notebook-left { display: flex; justify-content: center; align-items: center; }
+        .polaroid {
+            background: white; padding: 15px 15px 55px 15px; box-shadow: 3px 3px 10px rgba(0,0,0,0.2);
+            transform: rotate(-4deg); transition: transform 0.3s ease; width: 80%; max-width: 300px;
+        }
+        .polaroid:hover { transform: rotate(0deg) scale(1.05); z-index: 10; }
+        .polaroid img { width: 100%; height: auto; display: block; aspect-ratio: 1 / 1; object-fit: cover; }
+        .polaroid p { text-align: center; margin: 20px 0 0 0; font-size: 1.5rem; font-family: var(--font-handwriting); }
+        .notebook-right { border-left: 2px dashed var(--primary-color); margin-left: -2px; }
+        .note-paper {
+            background-image: repeating-linear-gradient(var(--notebook-bg) 0px, var(--notebook-bg) 29px, #e8e8e8 30px);
+            line-height: 30px; padding: 10px; width: 100%; height: 100%;
+        }
+        .note-paper h3 { text-align: left; margin-top: 0; font-size: 2rem; }
+        .note-paper p { font-size: 1.2rem; font-family: var(--font-handwriting); }
+
+        /* ------------------- */
+        /* --- COLLAGE PAGE --- */
+        /* ------------------- */
+        .collage-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 25px; padding: 20px;
+        }
+        .collage-item {
+            background: white; padding: 10px; box-shadow: 3px 3px 12px var(--shadow-color);
+            transform: rotate(var(--r, 0deg)); transition: transform 0.3s, z-index 0.3s;
+            position: relative; border-radius: 4px;
+        }
+        .collage-item:hover { transform: rotate(0deg) scale(1.15); z-index: 10; }
+        .collage-item img { width: 100%; display: block; border-radius: 2px; }
+
+        /* ------------------- */
+        /* --- SKETCHES PAGE (GRID LAYOUT) --- */
+        /* ------------------- */
+        #sketches-canvas {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+        }
+        .sketch-item {
+            width: 100%;
+            background: #fdfdf7;
+            padding: 8px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.15);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .sketch-item:hover {
+            transform: scale(1.05);
+            box-shadow: 4px 4px 12px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        .sketch-item img { width: 100%; display: block; }
+        
+        /* ------------------- */
+        /* --- LETTERS PAGE (RANDOMIZED LAYOUT) --- */
+        /* ------------------- */
+        .creative-canvas {
+            position: relative;
+            width: 100%;
+            height: 600px; /* Adjust height as needed */
+            margin-top: 20px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .envelope {
+            position: absolute;
+            font-size: 6rem;
+            cursor: pointer;
+            transition: transform 0.3s, filter 0.3s;
+        }
+        .envelope:hover {
+            transform: scale(1.25) !important; /* Override JS transform */
+            filter: drop-shadow(0 5px 5px var(--primary-color));
+            z-index: 20;
+        }
+
+        /* ------------------- */
+        /* --- PLACES (MAP) PAGE --- */
+        /* ------------------- */
+        .map-container {
+            width: 100%;
+            height: 500px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden; /* Ensures the iframe corners are rounded */
+        }
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* Letter Modal */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+            width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6);
+            justify-content: center; align-items: center; animation: fadeIn 0.3s;
+        }
+        .modal-content {
+            background-color: var(--notebook-bg); padding: 40px; border-radius: 12px;
+            width: 90%; max-width: 500px; box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+            position: relative; line-height: 1.8; font-size: 1.4rem; font-family: var(--font-handwriting);
+            max-height: 80vh; overflow-y: auto;
+        }
+        .close-button {
+            color: #aaa; position: absolute; top: 10px; right: 20px;
+            font-size: 32px; font-weight: bold; cursor: pointer;
+        }
+
+        /* ------------------- */
+        /* --- BOTTOM NAVIGATION --- */
+        /* ------------------- */
+        nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; background-color: white;
+            box-shadow: 0 -2px 10px var(--shadow-color); display: flex;
+            justify-content: space-around; padding: 10px 0; z-index: 500;
+            border-top-left-radius: 15px; border-top-right-radius: 15px;
+        }
+        .nav-button {
+            background: none; border: none; color: var(--primary-color); font-size: 0.7rem;
+            display: flex; flex-direction: column; align-items: center; cursor: pointer;
+            transition: color 0.3s, transform 0.3s; text-decoration: none;
+            font-family: var(--font-main); width: 20%; text-align: center;
+        }
+        .nav-button i { font-size: 1.4rem; margin-bottom: 5px; }
+        .nav-button:hover { transform: translateY(-5px); }
+        .nav-button.active { color: var(--accent-color); font-weight: bold; }
+        
+        /* ------------------- */
+        /* --- RESPONSIVE DESIGN --- */
+        /* ------------------- */
+        @media (min-width: 768px) {
+            .notebook { flex-direction: row; }
+            .notebook-left { border-right: 1px solid #eee; }
+            .notebook-right { border-left: none; margin-left: 0; }
+            .nav-button { font-size: 0.8rem; }
+            .nav-button i { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Hearts Background -->
+    <ul class="background-hearts">
+        <li class="heart">❤️</li><li class="heart">💕</li><li class="heart">💖</li>
+        <li class="heart">💗</li><li class="heart">💓</li><li class="heart">💞</li>
+    </ul>
+
+    <div id="app-container">
+        <main>
+            <!-- ======================= HOME PAGE ======================= -->
+            <section id="home" class="page-content active">
+                <div class="notebook">
+                    <div class="notebook-left">
+                        <div class="polaroid">
+                            <!-- File Structure: Place your main photo in an 'images' folder -->
+                            <img src="images/pic1.jpg" alt="A special picture" onerror="this.src='https://placehold.co/400x400/ffb6c1/ffffff?text=images/pic1.jpg';">
+                            <p>Our Favorite Moment</p>
+                        </div>
+                    </div>
+                    <div class="notebook-right">
+                        <div class="note-paper">
+                            <h3>My Dearest,</h3>
+                            <p>
+                                <!-- !!! WRITE your personal note here !!! -->
+                                This is a little world I built just for you...
+                                <br><br>
+                                With all my love,
+                                <br>
+                                [Your Name]
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Spotify player will be updated by JS -->
+                <iframe id="spotify-player" style="border-radius:12px; margin-top: 30px;" src="" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            </section>
+
+            <!-- ======================= COLLAGE PAGE ======================= -->
+            <section id="collage" class="page-content">
+                <h2>Our Wall of Memories</h2>
+                <div id="collage-grid" class="collage-grid">
+                    <!-- Images will be added here by JavaScript -->
+                </div>
+            </section>
+
+            <!-- ======================= SKETCHES PAGE ======================= -->
+            <section id="sketches" class="page-content">
+                <h2>A Few Sketches For You</h2>
+                 <div id="sketches-canvas">
+                    <!-- Items will be added here by JavaScript -->
+                 </div>
+            </section>
+
+            <!-- ======================= LETTERS PAGE ======================= -->
+            <section id="letters" class="page-content">
+                 <h2>Click an Envelope to Read a Letter</h2>
+                 <div class="creative-canvas" id="letters-canvas">
+                    <!-- Envelopes will be added here by JavaScript -->
+                 </div>
+            </section>
+            
+            <!-- ======================= PLACES PAGE ======================= -->
+            <section id="places" class="page-content">
+                <h2>Places We've Been</h2>
+                <div class="map-container" id="map-container">
+                    <!-- Map will be added here by JavaScript -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ======================= BOTTOM NAVIGATION ======================= -->
+    <nav>
+        <button data-target="home" class="nav-button active"><i class="fas fa-book-open"></i><span>Home</span></button>
+        <button data-target="collage" class="nav-button"><i class="fas fa-images"></i><span>Collage</span></button>
+        <button data-target="sketches" class="nav-button"><i class="fas fa-pencil-alt"></i><span>Sketches</span></button>
+        <button data-target="letters" class="nav-button"><i class="fas fa-envelope-open-text"></i><span>Letters</span></button>
+        <button data-target="places" class="nav-button"><i class="fas fa-map-marked-alt"></i><span>Places</span></button>
+        <a id="drive-link-nav" href="https://www.google.com/drive/" target="_blank" class="nav-button"><i class="fab fa-google-drive"></i><span>Drive</span></a>
+    </nav>
+
+    <!-- The Modal for displaying letters -->
+    <div id="letterModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <p id="letterText"></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- PARSE DATA FROM URL ---
+            function getPageData() {
+                try {
+                    const hash = window.location.hash.substring(1);
+                    if (hash.startsWith('data=')) {
+                        const encodedData = hash.substring(5);
+                        return JSON.parse(atob(encodedData));
+                    }
+                } catch (e) {
+                    console.error("Could not parse data from URL:", e);
+                }
+                // Return default data if parsing fails or no data is present
+                return {
+                    photos: 12, sketches: 15, letters: 10,
+                    drive: "https://drive.google.com/drive/folders/13A7yHNq3G_0-2jUtDl91OqWt3I8GZM8p?usp=sharing",
+                    map: `<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.536933552636!2d77.1805943150821!3d28.5977156824249!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d1d9a65f76b05%3A0x150784942e316d6!2sNational%20Rail%20Museum!5e0!3m2!1sen!2sin!4v1663333333333!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`
+                };
+            }
+
+            const pageData = getPageData();
+
+            // --- DYNAMIC CONTENT GENERATION ---
+            const collageGrid = document.getElementById('collage-grid');
+            const sketchesCanvas = document.getElementById('sketches-canvas');
+            const lettersCanvas = document.getElementById('letters-canvas');
+            const driveLinkNav = document.getElementById('drive-link-nav');
+            const mapContainer = document.getElementById('map-container');
+            const spotifyPlayer = document.getElementById('spotify-player');
+
+            // 1. Generate Collage Photos
+            for (let i = 1; i <= pageData.photos; i++) {
+                const randomRotate = (Math.random() - 0.5) * 16; // -8 to +8 deg
+                const item = document.createElement('div');
+                item.className = 'collage-item';
+                item.style.setProperty('--r', `${randomRotate}deg`);
+                // Start from pic2.jpg for collage, as pic1.jpg is on the homepage
+                item.innerHTML = `<img src="images/pic${i + 1}.jpg" alt="Collage image ${i + 1}" onerror="this.src='https://placehold.co/300x400/ffb6c1/ffffff?text=images/pic${i+1}.jpg'">`;
+                collageGrid.appendChild(item);
+            }
+
+            // 2. Generate Sketch Items
+            for (let i = 1; i <= pageData.sketches; i++) {
+                const sketchItem = document.createElement('div');
+                sketchItem.className = 'sketch-item';
+                sketchItem.innerHTML = `<img src="sketches/sketch${i}.png" alt="Sketch ${i}" onerror="this.src='https://placehold.co/200x200/ffffff/5b454a?text=sketches/sketch${i}.png'">`;
+                sketchesCanvas.appendChild(sketchItem);
+            }
+
+            // 3. Generate Envelope Items
+            for (let i = 1; i <= pageData.letters; i++) {
+                const envelope = document.createElement('div');
+                envelope.className = 'envelope';
+                envelope.dataset.letter = i;
+                envelope.innerHTML = '💌';
+                lettersCanvas.appendChild(envelope);
+            }
+            
+            // 4. Update Drive Link
+            driveLinkNav.href = pageData.drive;
+            
+            // 5. Update Spotify Player
+            spotifyPlayer.src = "https://open.spotify.com/embed/playlist/0Sz6lme8O5PAG1mIrnPWmo";
+
+            // 6. Generate Google Map
+            if (pageData.map && pageData.map.trim().startsWith('<iframe')) {
+                mapContainer.innerHTML = pageData.map;
+            }
+
+
+            // --- NON-OVERLAPPING RANDOM PLACEMENT LOGIC ---
+            function randomizePlacement(canvasId, itemSelector) {
+                const canvas = document.getElementById(canvasId);
+                const items = canvas.querySelectorAll(itemSelector);
+                if (items.length === 0) return;
+
+                const canvasRect = canvas.getBoundingClientRect();
+                const placedItems = [];
+                const padding = 10; // Minimum space between items
+
+                items.forEach(item => {
+                    let overlaps;
+                    let attempts = 0;
+                    let randomLeft, randomTop, randomRotate;
+
+                    const itemWidth = item.offsetWidth || 96; // Fallback width
+                    const itemHeight = item.offsetHeight || 96; // Fallback height
+
+                    do {
+                        overlaps = false;
+                        const maxLeft = canvasRect.width - itemWidth - padding;
+                        const maxTop = canvasRect.height - itemHeight - padding;
+                        
+                        randomLeft = Math.random() * maxLeft;
+                        randomTop = Math.random() * maxTop;
+                        randomRotate = (Math.random() - 0.5) * 40; // -20 to +20 deg
+
+                        const newItemRect = {
+                            left: randomLeft, top: randomTop,
+                            right: randomLeft + itemWidth + padding,
+                            bottom: randomTop + itemHeight + padding
+                        };
+
+                        for (const placedRect of placedItems) {
+                            if (newItemRect.left < placedRect.right && newItemRect.right > placedRect.left &&
+                                newItemRect.top < placedRect.bottom && newItemRect.bottom > placedRect.top) {
+                                overlaps = true;
+                                break;
+                            }
+                        }
+                        attempts++;
+                    } while (overlaps && attempts < 100);
+
+                    placedItems.push({
+                        left: randomLeft, top: randomTop,
+                        right: randomLeft + itemWidth + padding,
+                        bottom: randomTop + itemHeight + padding
+                    });
+
+                    item.style.left = `${randomLeft}px`;
+                    item.style.top = `${randomTop}px`;
+                    item.style.transform = `rotate(${randomRotate}deg)`;
+                });
+            }
+
+            // --- TAB NAVIGATION LOGIC ---
+            const navButtons = document.querySelectorAll('.nav-button[data-target]');
+            const pages = document.querySelectorAll('.page-content');
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.getAttribute('data-target');
+                    if (!targetId || button.classList.contains('active')) return;
+
+                    pages.forEach(page => page.classList.remove('active'));
+                    document.getElementById(targetId).classList.add('active');
+
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    window.scrollTo(0, 0);
+
+                    // Randomize letters only when their tab is clicked for the first time
+                    if (targetId === 'letters' && !lettersCanvas.dataset.randomized) {
+                        // Use a timeout to ensure elements are rendered before calculating positions
+                        setTimeout(() => {
+                           randomizePlacement('letters-canvas', '.envelope');
+                           lettersCanvas.dataset.randomized = 'true';
+                        }, 100);
+                    }
+                });
+            });
+
+            // --- LETTER MODAL LOGIC (FETCH FROM FILE) ---
+            const modal = document.getElementById('letterModal');
+            const closeButton = document.querySelector('.close-button');
+            const letterText = document.getElementById('letterText');
+
+            document.querySelectorAll('.envelope').forEach(envelope => {
+                envelope.addEventListener('click', async () => {
+                    const letterId = envelope.getAttribute('data-letter');
+                    const filePath = `letters/letter${letterId}.txt`;
+                    
+                    try {
+                        const response = await fetch(filePath);
+                        if (!response.ok) throw new Error('Letter not found.');
+                        const text = await response.text();
+                        letterText.innerText = text;
+                    } catch (error) {
+                        console.error('Error fetching letter:', error);
+                        letterText.innerText = "Couldn't find this letter. Make sure the file exists at: " + filePath;
+                    }
+                    
+                    modal.style.display = 'flex';
+                });
+            });
+
+            const closeModal = () => { modal.style.display = 'none'; };
+            closeButton.addEventListener('click', closeModal);
+            window.addEventListener('click', (event) => {
+                if (event.target == modal) closeModal();
+            });
+        });
+    </script>
+</body>
+</html>
+

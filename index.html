@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Special Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fff0f5;
+        }
+        h1, h2 {
+            font-family: 'Kalam', cursive;
+        }
+        .input-label {
+            font-family: 'Kalam', cursive;
+            font-size: 1.25rem;
+            color: #c72c6b;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-2xl bg-white p-8 rounded-2xl shadow-2xl">
+        <h1 class="text-4xl text-center text-pink-500 mb-2">Create Your Page</h1>
+        <p class="text-center text-gray-500 mb-8">Fill in the details below to generate a unique, shareable webpage.</p>
+
+        <form id="builder-form" class="space-y-6">
+            <!-- Section for Counts -->
+            <div>
+                <h2 class="text-2xl text-pink-400 border-b pb-2 mb-4">Content</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label for="photo-count" class="input-label block mb-1">No. of Photos</label>
+                        <input type="number" id="photo-count" value="12" min="1" class="w-full p-2 border rounded-lg focus:ring-pink-400 focus:border-pink-400">
+                    </div>
+                    <div>
+                        <label for="sketch-count" class="input-label block mb-1">No. of Sketches</label>
+                        <input type="number" id="sketch-count" value="15" min="1" class="w-full p-2 border rounded-lg focus:ring-pink-400 focus:border-pink-400">
+                    </div>
+                    <div>
+                        <label for="letter-count" class="input-label block mb-1">No. of Letters</label>
+                        <input type="number" id="letter-count" value="10" min="1" class="w-full p-2 border rounded-lg focus:ring-pink-400 focus:border-pink-400">
+                    </div>
+                </div>
+                <p class="text-xs text-gray-400 mt-2">Remember to name your files like `pic1.jpg`, `sketch1.png`, `letter1.txt` etc., in their respective folders.</p>
+            </div>
+
+            <!-- Section for Links -->
+            <div>
+                <h2 class="text-2xl text-pink-400 border-b pb-2 mb-4">Links</h2>
+                <div>
+                    <label for="drive-link" class="input-label block mb-1">Google Drive Link</label>
+                    <input type="url" id="drive-link" value="https://drive.google.com/drive/folders/13A7yHNq3G_0-2jUtDl91OqWt3I8GZM8p?usp=sharing" class="w-full p-2 border rounded-lg focus:ring-pink-400 focus:border-pink-400">
+                </div>
+                <div class="mt-4">
+                    <label for="map-link" class="input-label block mb-1">Google Maps Embed HTML</label>
+                    <textarea id="map-link" rows="4" class="w-full p-2 border rounded-lg focus:ring-pink-400 focus:border-pink-400" placeholder="Go to Google Maps, find a place, click Share -> Embed a map, and paste the HTML code here."></textarea>
+                    <p class="text-xs text-gray-400 mt-1">Example: &lt;iframe src="..."&gt;&lt;/iframe&gt;</p>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-4">
+                <button type="submit" class="w-full py-3 bg-pink-500 text-white font-bold text-lg rounded-xl hover:bg-pink-600 transition-transform transform hover:scale-105">
+                    Generate Shareable Page
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('builder-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const data = {
+                photos: document.getElementById('photo-count').value,
+                sketches: document.getElementById('sketch-count').value,
+                letters: document.getElementById('letter-count').value,
+                drive: document.getElementById('drive-link').value,
+                map: document.getElementById('map-link').value
+            };
+
+            // Encode the data to be URL-safe
+            const encodedData = btoa(JSON.stringify(data));
+
+            // Generate the URL for the viewer page
+            const viewerUrl = 'viewer.html#data=' + encodedData;
+
+            // Redirect to the new page
+            window.open(viewerUrl, '_blank');
+        });
+    </script>
+</body>
+</html>
+
