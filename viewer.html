@@ -146,29 +146,26 @@
         .sketch-item img { width: 100%; display: block; }
         
         /* ------------------- */
-        /* --- LETTERS PAGE (RANDOMIZED LAYOUT) --- */
+        /* --- LETTERS PAGE (GRID LAYOUT) --- */
         /* ------------------- */
-        .creative-canvas {
-            position: relative;
-            width: 100%;
-            height: 600px; /* Adjust height as needed */
-            margin-top: 20px;
+        #letters-canvas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 20px;
+            padding: 20px;
             background-color: white;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            padding: 15px;
-            box-sizing: border-box;
         }
         .envelope {
-            position: absolute;
             font-size: 6rem;
             cursor: pointer;
             transition: transform 0.3s, filter 0.3s;
+            text-align: center;
         }
         .envelope:hover {
-            transform: scale(1.25) !important; /* Override JS transform */
+            transform: scale(1.2);
             filter: drop-shadow(0 5px 5px var(--primary-color));
-            z-index: 20;
         }
 
         /* ------------------- */
@@ -258,14 +255,13 @@
                     <div class="notebook-left">
                         <div class="polaroid">
                             <!-- IMAGE FIX: Now checks for .jpg and then .jpeg -->
-                            <img src="images/pic10.jpg" alt="A special picture">
+                            <img src="images/pic1.jpg" onerror="this.onerror=null; this.src='images/pic1.jpeg';" alt="A special picture">
                         </div>
                     </div>
                     <div class="notebook-right">
                         <div class="note-paper">
                             <h3>My Moksha,</h3>
                             <p>
-                                
                                 <br><br>
                                 This is a virtual world I have built for your eyes, same like how you have created a speical world in my Mind
                                 With all my love,
@@ -298,7 +294,7 @@
             <!-- ======================= LETTERS PAGE ======================= -->
             <section id="letters" class="page-content">
                  <h2>Click an Envelope to Read a Letter</h2>
-                 <div class="creative-canvas" id="letters-canvas">
+                 <div id="letters-canvas">
                     <!-- Envelopes will be added here by JavaScript -->
                  </div>
             </section>
@@ -394,61 +390,6 @@
             // 5. Update Spotify Player
             spotifyPlayer.src = "https://open.spotify.com/embed/playlist/0Sz6lme8O5PAG1mIrnPWmo";
 
-            // --- NON-OVERLAPPING RANDOM PLACEMENT LOGIC ---
-            function randomizePlacement(canvasId, itemSelector) {
-                const canvas = document.getElementById(canvasId);
-                const items = canvas.querySelectorAll(itemSelector);
-                if (items.length === 0) return;
-
-                const canvasRect = canvas.getBoundingClientRect();
-                const placedItems = [];
-                const padding = 10; // Minimum space between items
-
-                items.forEach(item => {
-                    let overlaps;
-                    let attempts = 0;
-                    let randomLeft, randomTop, randomRotate;
-
-                    const itemWidth = item.offsetWidth || 96; // Fallback width
-                    const itemHeight = item.offsetHeight || 96; // Fallback height
-
-                    do {
-                        overlaps = false;
-                        const maxLeft = canvasRect.width - itemWidth - padding;
-                        const maxTop = canvasRect.height - itemHeight - padding;
-                        
-                        randomLeft = Math.random() * maxLeft;
-                        randomTop = Math.random() * maxTop;
-                        randomRotate = (Math.random() - 0.5) * 40; // -20 to +20 deg
-
-                        const newItemRect = {
-                            left: randomLeft, top: randomTop,
-                            right: randomLeft + itemWidth + padding,
-                            bottom: randomTop + itemHeight + padding
-                        };
-
-                        for (const placedRect of placedItems) {
-                            if (newItemRect.left < placedRect.right && newItemRect.right > placedRect.left &&
-                                newItemRect.top < placedRect.bottom && newItemRect.bottom > placedRect.top) {
-                                overlaps = true;
-                                break;
-                            }
-                        }
-                        attempts++;
-                    } while (overlaps && attempts < 100);
-
-                    placedItems.push({
-                        left: randomLeft, top: randomTop,
-                        right: randomLeft + itemWidth + padding,
-                        bottom: randomTop + itemHeight + padding
-                    });
-
-                    item.style.left = `${randomLeft}px`;
-                    item.style.top = `${randomTop}px`;
-                    item.style.transform = `rotate(${randomRotate}deg)`;
-                });
-            }
-
             // --- TAB NAVIGATION LOGIC ---
             const navButtons = document.querySelectorAll('.nav-button[data-target]');
             const pages = document.querySelectorAll('.page-content');
@@ -465,15 +406,6 @@
                     button.classList.add('active');
                     
                     window.scrollTo(0, 0);
-
-                    // Randomize letters only when their tab is clicked for the first time
-                    if (targetId === 'letters' && !lettersCanvas.dataset.randomized) {
-                        // Use a timeout to ensure elements are rendered before calculating positions
-                        setTimeout(() => {
-                           randomizePlacement('letters-canvas', '.envelope');
-                           lettersCanvas.dataset.randomized = 'true';
-                        }, 100);
-                    }
                 });
             });
 
